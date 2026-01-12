@@ -1,7 +1,8 @@
 import { Box, Container, Typography } from '@mui/material'
 import './App.css'
-import useHabitStore from './store/store'
+
 import AddHabitForm from './components/AddHabitForm'
+import HabitList from './components/HabitList'
 
 function App() {
 
@@ -13,6 +14,7 @@ function App() {
       <Box>
         <Typography variant="h2" component="h1" gutterBottom align='center'>Habit Tracker</Typography>
         <AddHabitForm />
+        <HabitList/>
       </Box>
     </Container>
   )

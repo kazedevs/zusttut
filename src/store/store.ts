@@ -1,4 +1,5 @@
 import { create } from "zustand";
+import { persist } from "zustand/middleware";
 
 export interface Habit {
     id: string,
@@ -11,9 +12,11 @@ export interface Habit {
 interface HabitStore {
     habits: Habit[];
     addHabit: (name: string, frequency: "daily" | "weekly") => void;
+    removeHabit: (id: string) => void;
+    toggleHabit: (id: string, data: string) => void;
 }
 
-const useHabitStore = create<HabitStore>()((set) => {
+const useHabitStore = create<HabitStore>()(persist((set) => {
     return {
         habits: [],
         addHabit: (name, frequency) => set((state) => {
@@ -28,8 +31,31 @@ const useHabitStore = create<HabitStore>()((set) => {
                     }
                 ]
             }
-        })
+        }),
+
+        removeHabit: (id) => set((state) => {
+            return {
+                habits: state.habits.filter((habit) => habit.id !== id)
+            }
+        }),
+
+        toggleHabit: (id, date) => set((state) => {
+            return {
+                habits: state.habits.map((habit) =>
+                    habit.id === id ? {
+                        ...habit,
+                        completedDates: habit.completedDates.includes(date)
+                            ? habit.completedDates.filter((d) => d !== date)
+                            : [...habit.completedDates, date],
+                    }
+                        : habit
+                )
+            }
+        }),
+
     };
-});
+}, {
+    name: "habits-local",
+}));
 
 export default useHabitStore;
